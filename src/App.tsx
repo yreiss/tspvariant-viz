@@ -1,9 +1,9 @@
-import Scene from './Scene'
+import Player from './Player'
 import { Grid, makeStyles } from '@material-ui/core';
 import Box from '@material-ui/core/Box';
-import { Stage } from 'react-konva';
-import Points from './Points';
-import Solution from './Solution';
+import Context from "./Context"
+import { useState } from 'react';
+import Scene from './Scene';
 
 const useStyles = makeStyles({
   main_win_dimensions: {
@@ -11,23 +11,26 @@ const useStyles = makeStyles({
   },
 });
 
+const passengers = [[[700, 200], true], [[300, 300], false], [[300, 600], true], [[200, 400], false]]
+
 const App = () => {
   const classes = useStyles();
+  const [context, setContext] = useState({ "bestSolution": [], "bestDist": 100000 });
   return (
-    <Box className={classes.main_win_dimensions}>
-      <Grid container spacing={3}>
-        <Grid item xs={6}>
-          <Scene />
+    <Context.Provider value={{ context, setContext }}>
+      <Box className={classes.main_win_dimensions} alignContent="center">
+        <Grid container spacing={3}>
+          <Grid item xs={1}>
+          </Grid>
+          <Grid item xs={5}>
+            <Player passengers={passengers} />
+          </Grid>
+          <Grid item xs={5}>
+            <Scene dist={context.bestDist} passengers={passengers} route={context.bestSolution} />
+          </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <p> Best: 24.7 </p>
-          <Stage width={1000} height={1000}>
-            <Points />
-            <Solution route={[[100, 100], [700, 200], [300, 300], [300, 600], [200, 400]]} />
-          </Stage>
-        </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </Context.Provider>
   )
 }
 
